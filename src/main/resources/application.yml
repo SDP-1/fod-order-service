@@ -8,10 +8,10 @@ spring:
   # MongoDB Configuration
   data:
     mongodb:
-      uri: mongodb://localhost:27017/restaurant-service
-      database: restaurant-service
-      username: <your-mongo-username>
-      password: <your-mongo-password>
+      uri: mongodb+srv://root:1234@fod-order.ngnx8j5.mongodb.net/
+      database: fod-order
+      username: root
+      password: 1234
 
   config:
     import: optional:configserver:http://localhost:8888
