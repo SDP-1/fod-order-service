@@ -1,12 +1,10 @@
 package com.fod.order_service.service;
 
-
 import com.fod.order_service.client.RestaurantClient;
 import com.fod.order_service.dto.OrderRequestDTO;
 import com.fod.order_service.dto.OrderResponseDTO;
 import com.fod.order_service.entity.Order;
 import com.fod.order_service.repositoty.OrderRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

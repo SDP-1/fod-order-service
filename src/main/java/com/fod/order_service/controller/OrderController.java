@@ -1,6 +1,5 @@
 package com.fod.order_service.controller;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponseDTO> createOrder(@Valid @RequestBody OrderRequestDTO requestDTO) {
         OrderResponseDTO responseDTO = orderService.createOrder(requestDTO);
-        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
