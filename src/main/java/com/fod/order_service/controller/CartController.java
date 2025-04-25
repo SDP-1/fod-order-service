@@ -5,11 +5,13 @@ import com.fod.order_service.dto.CartResponseDTO;
 import com.fod.order_service.service.CartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
@@ -25,8 +27,8 @@ public class CartController {
         return new ResponseEntity<>(cart, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<CartResponseDTO> getCart(@RequestHeader("userId") String userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<CartResponseDTO> getCart(@PathVariable String userId) {
         CartResponseDTO cart = cartService.getCart(userId);
         return ResponseEntity.ok(cart);
     }

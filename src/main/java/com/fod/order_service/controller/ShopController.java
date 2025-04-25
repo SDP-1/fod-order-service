@@ -46,4 +46,11 @@ public class ShopController {
         List<MenuItemResponseDTO> items = shopService.getShopItemsByCategory(shopId, category);
         return ResponseEntity.ok(items);
     }
+
+    @GetMapping("/{shopId}/items/categories")
+    public ResponseEntity<List<String>> getShopItemsCategories(
+            @PathVariable String shopId) {
+        List<String> items = shopService.getShopItemsCategories(shopId);
+        return ResponseEntity.ok(items);
+    }
 }

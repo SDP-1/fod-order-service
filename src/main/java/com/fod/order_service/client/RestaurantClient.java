@@ -27,4 +27,8 @@ public interface RestaurantClient {
     List<MenuItemResponseDTO> getMenuItemsByRestaurantAndCategory(
             @PathVariable("restaurantId") String restaurantId,
             @PathVariable("category") String category);
+
+    @GetMapping("/api/menu-items/restaurant/{restaurantId}/categories")
+    List<String> getMenuItemsCategoriesByRestaurantId(
+            @PathVariable("restaurantId") String restaurantId);
 }
