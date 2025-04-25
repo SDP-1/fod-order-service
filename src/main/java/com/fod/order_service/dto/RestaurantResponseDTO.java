@@ -27,6 +27,7 @@ public class RestaurantResponseDTO {
     private Double deliveryFee;
     private List<String> operatingHours;
     private List<String> imageUrls;
+    private String logoUrl;
     private Boolean isPromoted;
     private List<String> dietaryPreferences;
     private Date createdAt;

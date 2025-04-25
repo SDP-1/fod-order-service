@@ -43,4 +43,12 @@ public class ShopService {
         }
         return items;
     }
+
+    public List<String> getShopItemsCategories(String shopId) {
+        List<String> items = restaurantClient.getMenuItemsCategoriesByRestaurantId(shopId);
+        if (items.isEmpty()) {
+            throw new IllegalArgumentException("No items categoyies found for shop: " + shopId);
+        }
+        return items;
+    }
 }
