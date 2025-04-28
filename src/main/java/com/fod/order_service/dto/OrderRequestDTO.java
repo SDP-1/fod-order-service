@@ -28,7 +28,6 @@ public class OrderRequestDTO {
     @Positive
     private Double deliveryFee;
 
-    @Positive
     private Double taxAmount;
 
     @NotNull

@@ -16,6 +16,10 @@ spring:
   config:
     import: optional:configserver:http://localhost:8888
 
+stripe:
+  api:
+    key: 
+
 eureka:
   instance:
     hostname: localhost
