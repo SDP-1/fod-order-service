@@ -23,7 +23,7 @@ public class PaymentController {
                     .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setSuccessUrl("http://localhost:5173/success")
-                    .setCancelUrl("http://localhost:5173/fod-order/order-summary/"+paymentRequest.getUserId())
+                    .setCancelUrl("http://localhost:5173/fod-order/order-summary/" + paymentRequest.getUserId())
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
                                     .setPriceData(
@@ -53,6 +53,31 @@ public class PaymentController {
             e.printStackTrace();
             response.put("error", e.getMessage());
             response.put("status", "failed");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<Map<String, Object>> verifyPayment(@RequestParam("sessionId") String sessionId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Retrieve the checkout session from Stripe
+            Session session = Session.retrieve(sessionId);
+
+            // Check if the payment was successful
+            if ("paid".equals(session.getPaymentStatus())) {
+                response.put("status", "success");
+                response.put("sessionId", session.getId());
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "failed");
+                response.put("error", "Payment not completed or session expired.");
+                return ResponseEntity.status(400).body(response);
+            }
+        } catch (StripeException e) {
+            e.printStackTrace();
+            response.put("status", "failed");
+            response.put("error", "Failed to verify payment: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
