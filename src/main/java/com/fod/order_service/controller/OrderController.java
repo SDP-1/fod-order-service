@@ -1,5 +1,6 @@
 package com.fod.order_service.controller;
 
+import com.fod.order_service.entity.Enum.OrderStatus;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,13 +74,21 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<OrderResponseDTO> updateOrder(@PathVariable String id, @Valid @RequestBody OrderRequestDTO requestDTO) {
         OrderResponseDTO updatedOrder = orderService.updateOrder(id, requestDTO);
         if (updatedOrder != null) {
             return ResponseEntity.ok(updatedOrder);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PatchMapping("/{orderId}/status/{newStatus}")
+    public void updateOrderStatus(
+            @PathVariable String orderId,
+            @PathVariable  OrderStatus newStatus
+            ) {
+       orderService.updateOrderStatusById(orderId,newStatus);
     }
 
     @DeleteMapping("/{id}")

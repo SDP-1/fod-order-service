@@ -3,10 +3,16 @@ package com.fod.order_service.service;
 import com.fod.order_service.client.RestaurantClient;
 import com.fod.order_service.dto.OrderRequestDTO;
 import com.fod.order_service.dto.OrderResponseDTO;
+import com.fod.order_service.entity.Enum.OrderStatus;
 import com.fod.order_service.entity.Order;
 import com.fod.order_service.repositoty.OrderRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +29,8 @@ public class OrderService {
     private ModelMapper modelMapper;
     @Autowired
     private RestaurantClient restaurantClient;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public OrderResponseDTO createOrder(OrderRequestDTO requestDTO) {
         Order order = modelMapper.map(requestDTO, Order.class);
@@ -90,7 +98,14 @@ public class OrderService {
         return null;
     }
 
+    public void updateOrderStatusById(String orderId, OrderStatus orderStatus) {
+        Query query = new Query(Criteria.where("id").is(orderId));
+        Update update = new Update().set("orderStatus", orderStatus);
+        mongoTemplate.updateFirst(query, update, Order.class);
+    }
+
     public void deleteOrder(String id) {
         orderRepository.deleteById(id);
     }
+
 }
