@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -96,6 +97,18 @@ public class OrderService {
             return modelMapper.map(updatedOrder, OrderResponseDTO.class);
         }
         return null;
+    }
+
+    public Optional<OrderResponseDTO> getLatestOrderByUserId(String userId) {
+        List<OrderStatus> allowedStatuses = Arrays.asList(
+                OrderStatus.PENDING,
+                OrderStatus.CONFIRMED,
+                OrderStatus.PREPARING,
+                OrderStatus.READY_FOR_PICKUP,
+                OrderStatus.OUT_FOR_DELIVERY
+        );
+        return orderRepository.findTopByUserIdAndOrderStatusInOrderByCreatedAtDesc(userId, allowedStatuses)
+                .map(order -> modelMapper.map(order, OrderResponseDTO.class));
     }
 
     public void updateOrderStatusById(String orderId, OrderStatus orderStatus) {
