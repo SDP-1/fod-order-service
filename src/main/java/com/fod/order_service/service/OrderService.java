@@ -28,16 +28,24 @@ public class OrderService {
 
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private RestaurantClient restaurantClient;
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private CartService cartService;
+
     public OrderResponseDTO createOrder(OrderRequestDTO requestDTO) {
-        Order order = modelMapper.map(requestDTO, Order.class);
-        order.calculateTotalAmount();
-        Order savedOrder = orderRepository.save(order);
-        return modelMapper.map(savedOrder, OrderResponseDTO.class);
+        try {
+            Order order = modelMapper.map(requestDTO, Order.class);
+            order.calculateTotalAmount();
+            Order savedOrder = orderRepository.save(order);
+            //clear cart
+            cartService.clearCart(requestDTO.getUserId());
+            return modelMapper.map(savedOrder, OrderResponseDTO.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create order or clear cart", e);
+        }
     }
 
     public Optional<OrderResponseDTO> getOrderById(String id) {
