@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,16 +28,24 @@ public class OrderService {
 
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private RestaurantClient restaurantClient;
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private CartService cartService;
+
     public OrderResponseDTO createOrder(OrderRequestDTO requestDTO) {
-        Order order = modelMapper.map(requestDTO, Order.class);
-        order.calculateTotalAmount();
-        Order savedOrder = orderRepository.save(order);
-        return modelMapper.map(savedOrder, OrderResponseDTO.class);
+        try {
+            Order order = modelMapper.map(requestDTO, Order.class);
+            order.calculateTotalAmount();
+            Order savedOrder = orderRepository.save(order);
+            //clear cart
+            cartService.clearCart(requestDTO.getUserId());
+            return modelMapper.map(savedOrder, OrderResponseDTO.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create order or clear cart", e);
+        }
     }
 
     public Optional<OrderResponseDTO> getOrderById(String id) {
@@ -96,6 +105,18 @@ public class OrderService {
             return modelMapper.map(updatedOrder, OrderResponseDTO.class);
         }
         return null;
+    }
+
+    public Optional<OrderResponseDTO> getLatestOrderByUserId(String userId) {
+        List<OrderStatus> allowedStatuses = Arrays.asList(
+                OrderStatus.PENDING,
+                OrderStatus.CONFIRMED,
+                OrderStatus.PREPARING,
+                OrderStatus.READY_FOR_PICKUP,
+                OrderStatus.OUT_FOR_DELIVERY
+        );
+        return orderRepository.findTopByUserIdAndOrderStatusInOrderByCreatedAtDesc(userId, allowedStatuses)
+                .map(order -> modelMapper.map(order, OrderResponseDTO.class));
     }
 
     public void updateOrderStatusById(String orderId, OrderStatus orderStatus) {

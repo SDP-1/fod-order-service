@@ -83,6 +83,13 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/user/{userId}/latest")
+    public ResponseEntity<OrderResponseDTO> getLatestOrderByUserId(@PathVariable String userId) {
+        Optional<OrderResponseDTO> latestOrder = orderService.getLatestOrderByUserId(userId);
+        return latestOrder.map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @PatchMapping("/{orderId}/status/{newStatus}")
     public void updateOrderStatus(
             @PathVariable String orderId,

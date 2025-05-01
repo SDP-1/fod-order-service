@@ -18,18 +18,18 @@ public class PaymentController {
     public ResponseEntity<Map<String, Object>> createCheckoutSession(@RequestBody PaymentRequest paymentRequest) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // Create Checkout Session
+            // Create Checkout Session using successUrl and cancelUrl from PaymentRequest
             SessionCreateParams params = SessionCreateParams.builder()
                     .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("http://localhost:5173/success")
-                    .setCancelUrl("http://localhost:5173/fod-order/order-summary/" + paymentRequest.getUserId())
+                    .setSuccessUrl(paymentRequest.getSuccessUrl())
+                    .setCancelUrl(paymentRequest.getCancelUrl())
                     .addLineItem(
                             SessionCreateParams.LineItem.builder()
                                     .setPriceData(
                                             SessionCreateParams.LineItem.PriceData.builder()
                                                     .setCurrency(paymentRequest.getCurrency())
-                                                    .setUnitAmount((long) paymentRequest.getAmount())
+                                                    .setUnitAmount(paymentRequest.getAmount())
                                                     .setProductData(
                                                             SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                     .setName(paymentRequest.getDescription())
